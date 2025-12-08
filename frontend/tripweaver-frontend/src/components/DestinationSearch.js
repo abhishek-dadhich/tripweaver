@@ -1,19 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
-import API_BASE from "../config";
+import "./DestinationSearch.css";
+import Navbar from "./navbar";
 
-function DestinationSearch() {
+export default function DestinationSearch() {
+  const resultsRef = useRef(null);
+
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("tourism");
   const [results, setResults] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const API_BASE = "http://localhost:8090/api";
+
   const handleSearch = async () => {
     if (!query.trim()) {
       setError("Search query cannot be empty.");
       return;
     }
+
     setError("");
     setLoading(true);
 
@@ -29,10 +35,17 @@ function DestinationSearch() {
         formatted: d.address || "",
         categories: d.category || "",
         latitude: d.latitude,
-        longitude: d.longitude
+        longitude: d.longitude,
       }));
 
       setResults(normalized);
+
+      if (resultsRef.current) {
+        window.scrollTo({
+          top: resultsRef.current.offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -45,76 +58,70 @@ function DestinationSearch() {
   };
 
   return (
-    <div style={{ width: "700px", margin: "auto", paddingTop: "40px" }}>
-      <h2>Search Destinations</h2>
+    <div className="explore-container">
+      <Navbar />
 
-      {error && <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>}
+      {/* MAIN CONTENT */}
+      <div className="main-content">
+        <h2>Destination Finder</h2>
 
-      <input
-        type="text"
-        placeholder="Search a place (e.g., Paris, Goa)"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-      />
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search a city, country, or landmark"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
 
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-      >
-        <option value="tourism">Tourism</option>
-        <option value="tourism.sights">Tourist Spots</option>
-        <option value="entertainment">Entertainment</option>
-        <option value="accommodation">Hotels</option>
-        <option value="catering">Restaurants</option>
-      </select>
+          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="tourism">Tourism (General)</option>
+            <option value="tourism.sights">Tourist Spots</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="accommodation">Hotels & Stays</option>
+            <option value="catering">Restaurants & Food</option>
+          </select>
 
-      <button
-        onClick={handleSearch}
-        disabled={loading}
-        style={{
-          padding: "10px 20px",
-          width: "100%",
-          background: "#4a4aff",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer"
-        }}
-      >
-        {loading ? "Searching..." : "Search"}
-      </button>
+          <button onClick={handleSearch} disabled={loading}>
+            {loading ? "SEARCHING..." : "SEARCH"}
+          </button>
+        </div>
 
-      <div style={{ marginTop: "20px" }}>
-        {results.length === 0 && !loading && <p>No results yet.</p>}
+        {results.length === 0 && !loading && (
+          <p className="info-message">
+            Enter a destination and category to see results below.
+          </p>
+        )}
 
-        {results.map((d, index) => (
-          <div
-            key={index}
-            style={{
-              border: "1px solid #ccc",
-              padding: "12px",
-              borderRadius: "8px",
-              marginBottom: "10px"
-            }}
-          >
-            <h3>{d.name}</h3>
-            <p>{d.formatted}</p>
-            <p>
-              <strong>Categories:</strong> {d.categories || "N/A"}
-            </p>
-            <p>
-              <strong>Coordinates:</strong>{" "}
-              {d.latitude && d.longitude
-                ? `${d.latitude}, ${d.longitude}`
-                : "Not available"}
-            </p>
-          </div>
-        ))}
+        {error && <p className="error-message">⚠️ {error}</p>}
+
+        {/* RESULTS */}
+        <div className="results-container" ref={resultsRef}>
+          {results.map((d, i) => (
+            <div key={i} className="dest-card">
+              <h3>{d.name}</h3>
+              <p className="address">{d.formatted || "Address Not Available"}</p>
+
+              <div className="details-row">
+                <span>
+                  <strong>Categories:</strong>{" "}
+                  <span className="category-value">
+                    {(d.categories || "N/A").split(",").join(", ")}
+                  </span>
+                </span>
+
+                <span>
+                  <strong>Coordinates:</strong>{" "}
+                  <span className="coords-value">
+                    {d.latitude && d.longitude
+                      ? `${d.latitude}, ${d.longitude}`
+                      : "N/A"}
+                  </span>
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
-
-export default DestinationSearch;

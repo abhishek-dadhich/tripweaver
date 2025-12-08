@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import DestinationSearch from "./components/DestinationSearch";
+import Explore from "./components/Explore";
+import Trips from "./components/Trips";
+
 import "./App.css";
 import "boxicons/css/boxicons.min.css";
 
@@ -12,14 +16,17 @@ function App() {
   return (
     <Router>
       <Routes>
+
+        {/* HOME → EXPLORE */}
+        <Route path="/" element={<Explore />} />
+
         {/* LOGIN / SIGNUP PAGE */}
         <Route
-          path="/"
+          path="/signup"
           element={
             <div className={`container ${isSignup ? "active" : ""}`}>
               <div className="form-box">
                 {isSignup ? <Signup /> : <Signin />}
-
                 <p className="toggle-text">
                   {isSignup ? (
                     <>
@@ -52,8 +59,15 @@ function App() {
           }
         />
 
-        {/* DESTINATION SEARCH PAGE */}
+        {/* DESTINATION SEARCH */}
         <Route path="/search" element={<DestinationSearch />} />
+
+        {/* TRIPS PAGE */}
+        <Route path="/trips" element={<Trips />} />
+
+        {/* REDIRECT any unknown route */}
+        <Route path="*" element={<Navigate to="/signup" />} />
+
       </Routes>
     </Router>
   );

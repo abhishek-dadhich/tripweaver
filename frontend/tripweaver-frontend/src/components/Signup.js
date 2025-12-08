@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import API_BASE from "../config";
 import "boxicons/css/boxicons.min.css";
-import "../App.css";
+
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -11,6 +10,8 @@ function Signup() {
     password: "",
     role: "USER"   // ✅ default role
   });
+  const API_BASE = "http://localhost:8090/api"; // just the backend base URL
+
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
