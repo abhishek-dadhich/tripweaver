@@ -3,7 +3,7 @@ import axios from "axios";
 import API_BASE from "../config";
 import Navbar from './navbar';
 import "./Trips.css";
-
+#Trips
 function Trips() {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
