@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./navbar";
 import "./Explore.css";
-
+#Homepage
 const popularPlaces = [
   { name: "Hyderabad", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2GkubVwmXbxavaUUc6PB-Jo8wMUJ2WsL9qQ&s"},
   { name: "Paris", img: "https://a.travel-assets.com/findyours-php/viewfinder/images/res70/474000/474240-Left-Bank-Paris.jpg" },
